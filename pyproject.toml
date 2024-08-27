@@ -1,0 +1,123 @@
+[tool.poetry]
+name = "simple_ft"
+version = "0.1.0"
+description = "Yet another file transfer application."
+authors = ["Mauricio <mg4145@columbia.edu>"]
+readme = "README.md"
+license = "MIT"
+packages = [
+  { include = "simple_ft",  from = "src"}, 
+  { include = "server",     from = "src/simple_ft"}, 
+  { include = "client",     from = "src/simple_ft"}, 
+]
+
+
+[tool.poetry.dependencies]
+python = "^3.12"
+numpy = "^2.1.0"
+argparse = "^1.4.0"
+ipaddress = "^1.0.23"
+pandas = "^2.2.2"
+
+
+[tool.poetry.group.dev.dependencies]
+pynvim = "^0.5.0"
+setuptools = "^73.0.1"
+black = "^24.8.0"
+mypy = "^1.11.2"
+isort = "^5.13.2"
+pytest-cov = "^5.0.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+  
+# POE THE POET ################################################################
+[tool.poe]
+# Set the poe plugin prefix to an empty string
+poetry_command = ""
+
+# POE THE POET TASKS
+[tool.poe.tasks]
+start = "python src/simple_ft/main.py -s "
+client = "python src/simple_ft/main.py -c "
+lint = "python -m mypy src/"
+format  = "python -m black src/ tests/"
+test = "pytest"
+sort = "isort src/ tests/"
+lsf = ["lint", "sort", "format"]
+## POE THE POET END CONFIG ####################################################
+
+
+# FORMATTING CONFIG ###########################################################
+[tool.black]
+color = true
+line-length = 120
+target-version = ['py312']
+skip-string-normalization = true
+## END OF FORMATTING CONFIG ###################################################
+
+
+# LINTING CONFIG ##############################################################
+[tool.mypy]
+python_version = "3.12"
+warn_return_any = true
+warn_unused_configs = true
+strict = true
+exclude = ["tests", ".git"]
+## END OF LINTING CONFIG ######################################################
+
+
+# SORTING IMPORT PACKAGES #####################################################
+[tool.isort]
+combine_as_imports = true
+include_trailing_comma = true
+known_first_party = ["client", "server"]
+line_length = 120
+multi_line_output = 3
+profile = "black"
+## END OF SORTING IMPORT PACKAGES #############################################
+
+
+# PYTEST CONFIG ###############################################################
+[tool.pytest.ini_options]
+addopts = "--cov=simple_ft --verbose tests --cov-report=term --cov-report=html"
+## END OF PYTEST CONFIG #######################################################
+
+
+# COVERAGE CONFIG #############################################################
+[tool.coverage.run]
+branch = true
+
+[tool.coverage.report]
+# Regexes for lines to exclude from consideration
+exclude_also = [
+  # Don't complain about missing debug-only code:
+  "def __repr__",
+  "if self\\.debug",
+
+  # Don't complain if tests don't hit defensive assertion code:
+  "raise AssertionError",
+  "raise NotImplementedError",
+
+  # Don't complain if non-runnable code isn't run:
+  "if 0:",
+  "if __name__ == .__main__.:",
+
+  # Don't complain about abstract methods, they aren't run:
+  "@(abc\\.)?abstractmethod",
+]
+
+ignore_errors = true
+
+fail_under = 40
+show_missing = true
+## END OF COVERAGE CONFIG #####################################################
+
+
+# HTML REPORT CONFIG ##########################################################
+[tool.coverage.html] 
+directory = "coverage_html_report"
+title = "Simple_FT Coverage Report"
+## END OF HTML REPORT CONFIG ##################################################
